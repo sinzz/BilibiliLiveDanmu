@@ -1,4 +1,4 @@
-package com.example.bilibililivedanmu;
+package com.example.bilibililivedanmu.Bean;
 
 import android.util.Log;
 

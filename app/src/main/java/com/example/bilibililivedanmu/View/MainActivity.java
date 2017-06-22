@@ -1,4 +1,4 @@
-package com.example.bilibililivedanmu;
+package com.example.bilibililivedanmu.View;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -6,7 +6,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+
+
+import com.example.bilibililivedanmu.R;
 
 import okhttp3.MediaType;
 
@@ -74,20 +76,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         }).start();*/
-        BilibiliDM dmClient = new BilibiliDM(Integer.parseInt(id),danmuUrl);
-        dmClient.start();
-        int i=0;
-        while (BiliDMdata.messageList.isEmpty()==true){
-            i++;
-        }
-        if(BiliDMdata.messageList.isEmpty()==false)
-        {
-            BiliDMdata.DmMessage message = BiliDMdata.messageList.poll();
-            if(message!=null){
-                DebugLog.d(Integer.toString(i));
-                DebugLog.d(message.getMessage());
-            }
-        }
+
+
     }
     private void showResponse(final String response){
         runOnUiThread(new Runnable() {
