@@ -87,14 +87,14 @@ public class DmData {
             }
         }
 
-        DmMessage(long messageColor, long timeData,String message, long id, String uName, int admin, int vip, int xxx, int w1, int w2, String rName, String up, int rank) {
+        public DmMessage(long messageColor, long timeData,String message, long id, String uName, int admin, int vip, int xxx, int w1, int w2, String rName, String up, int rank) {
             this.timeData = timeData;
             this.messageColor = messageColor;
             this.message = message;
             this.user = new userData(id,uName,admin,vip,xxx,w1,w2);
             this.medal = new medalData(rName,up,rank);
         }
-        DmMessage(long messageColor, long timeData,String message, long id, String uName, int admin, int vip, int xxx, int w1, int w2){
+        public DmMessage(long messageColor, long timeData,String message, long id, String uName, int admin, int vip, int xxx, int w1, int w2){
             this.timeData = timeData;
             this.messageColor = messageColor;
             this.message = message;

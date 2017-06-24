@@ -3,11 +3,16 @@ package com.example.bilibililivedanmu.Socket;
 import com.example.bilibililivedanmu.Bean.DebugLog;
 import com.example.bilibililivedanmu.Bean.DmData;
 
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.Socket;
+import java.net.URL;
 import java.net.UnknownHostException;
 
 /**
@@ -15,6 +20,7 @@ import java.net.UnknownHostException;
  */
 
 public class DmSocket extends Thread{
+    private final String liveUrl = "http://live.bilibili.com/";
     private  final  String TAG = getClass().toString();
     public interface OnSocketReceiveCallBack{
         public void OnReceiveFromServerMsg(DmData.DmType type, Object msg);
@@ -42,6 +48,8 @@ public class DmSocket extends Thread{
     }
     @Override
     public void run() {
+        roomID = getRealRoomID(roomID);
+        isAlive = true;
         byte[] buf = new byte[1024*4];
         long lastKeepTime = System.currentTimeMillis();
         DmData mDmData = DmData.getInstance();
@@ -80,22 +88,31 @@ public class DmSocket extends Thread{
                     switch (packType){
                         case 1:
                             inputStream.read(buf,0,packLen);
-                            DebugLog.d(TAG,new String(buf,0,packLen));break;
+                            DebugLog.d(TAG,new String(buf,0,packLen));
+                            break;
                         case 2:
-                            inputStream.read(buf,0,packLen);DebugLog.d(TAG,new String(buf,0,packLen));break;
+                            inputStream.read(buf,0,packLen);
+                            DebugLog.d(TAG,new String(buf,0,packLen));
+                            break;
                         case 3:
-                            int number = inputStream.readInt();break;
+                            int number = inputStream.readInt();
+                            break;
                         case 4:
-                            inputStream.read(buf,0,packLen);DebugLog.d(TAG,new String(buf,0,packLen));break;
+                            inputStream.read(buf,0,packLen);DebugLog.d(TAG,new String(buf,0,packLen));
+                            break;
                         case 5:
                             inputStream.read(buf,0,packLen);
+                            DebugLog.d(TAG,new String(buf,0,packLen));
                             Object res =  mDmData.addJson(buf,packLen);
                             if(mOnSocketReceiveCallBack!=null){
+                                DebugLog.d("test","CallBack");
                                 mOnSocketReceiveCallBack.OnReceiveFromServerMsg(DmData.DmType.MESSAGE,res);
 
                             }
+                            break;
                         default:
                             inputStream.read(buf,0,packLen);DebugLog.d(TAG,new String(buf,0,packLen));
+                            break;
                     }
                 }
 
@@ -181,6 +198,44 @@ public class DmSocket extends Thread{
                 e.printStackTrace();
             }
         }
+    }
+    private int getRealRoomID(int id){
+        int realRoomID = 0;
+        BufferedReader reader = null;
+        HttpURLConnection connection = null;
+        try {
+            URL url = new URL(liveUrl+String.valueOf(id));
+            connection = (HttpURLConnection)url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setConnectTimeout(8000);
+            connection.setReadTimeout(8000);
+            InputStream in = connection.getInputStream();
+            reader = new BufferedReader(new InputStreamReader(in));
+            StringBuffer response = new StringBuffer();
+            String line;
+            while((line=reader.readLine())!=null){
+                response.append(line);
+            }
+            int tmpindexstart = response.indexOf("ROOMID = ");
+            int tmpindexend = response.indexOf(";",tmpindexstart);
+            realRoomID = Integer.valueOf(response.substring(tmpindexstart+9,tmpindexend));
+            DebugLog.d(TAG,"RealRoomID : "+realRoomID);
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            if(reader!=null){
+                try {
+                    reader.close();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+            if(connection!=null){
+                connection.disconnect();
+            }
+        }
+
+        return realRoomID;
     }
 
 
