@@ -1,32 +1,21 @@
-package com.example.bilibililivedanmu;
-
-import com.google.gson.Gson;
+package com.example.bilibililivedanmu.Bean;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.concurrent.ConcurrentLinkedQueue;
-
-/**
- * Created by chazz on 2017/5/2.
- */
-
-public class BiliDMdata {
-
-    BiliDMdata() {
-    }
-    private static volatile BiliDMdata instance;
-
-    public static BiliDMdata getInstance() {
-        if (instance == null) {
-            synchronized (BiliDMdata.class) {
-                if (instance == null) {
-                    instance = new BiliDMdata();
+public class DmData {
+    private static volatile DmData instance;
+    public static  DmData getInstance(){
+        if(instance==null){
+            synchronized (DmData.class){
+                if(instance==null){
+                    instance = new DmData();
                 }
             }
         }
         return instance;
     }
+    public  enum DmType{ MESSAGE,GIFT}
 
     public class DmMessage {
         private String message;
@@ -98,14 +87,14 @@ public class BiliDMdata {
             }
         }
 
-        DmMessage(long messageColor, long timeData,String message, long id, String uName, int admin, int vip, int xxx, int w1, int w2, String rName, String up, int rank) {
+        public DmMessage(long messageColor, long timeData,String message, long id, String uName, int admin, int vip, int xxx, int w1, int w2, String rName, String up, int rank) {
             this.timeData = timeData;
             this.messageColor = messageColor;
             this.message = message;
             this.user = new userData(id,uName,admin,vip,xxx,w1,w2);
             this.medal = new medalData(rName,up,rank);
         }
-        DmMessage(long messageColor, long timeData,String message, long id, String uName, int admin, int vip, int xxx, int w1, int w2){
+        public DmMessage(long messageColor, long timeData,String message, long id, String uName, int admin, int vip, int xxx, int w1, int w2){
             this.timeData = timeData;
             this.messageColor = messageColor;
             this.message = message;
@@ -129,29 +118,25 @@ public class BiliDMdata {
         }
 
     }
-    public static class DmGift {
+    public  class DmGift {
 
     }
-
-    static Gson gson = new Gson();
-    public static ConcurrentLinkedQueue<DmMessage> messageList = new ConcurrentLinkedQueue<DmMessage>();
-    public static ConcurrentLinkedQueue<DmGift> giftList = new ConcurrentLinkedQueue<DmGift>();
-
-    public void addJson(byte[] data, int len) {
-        //TODO 加入多线程检测
+    public   Object addJson(byte[] data, int len) {
         String str = new String(data, 0, len);
         JSONObject jsonData;
+        Object res=null;
         try {
             jsonData = new JSONObject(str);
             String cmdData = jsonData.getString("cmd");
+
             switch (cmdData) {
                 case "SEND_GIFT":
                     JSONObject giftJson = jsonData.getJSONObject("data");
-                    resolveGift(giftJson);
+                    res = resolveGift(giftJson);
                     break;
                 case "DANMU_MSG":
                     JSONArray danmuJson = jsonData.getJSONArray("info");
-                    resolveDanmuJson(danmuJson);
+                    res =  resolveDanmuJson(danmuJson);
                     break;
             }
 
@@ -159,8 +144,10 @@ public class BiliDMdata {
             e.printStackTrace();
 
         }
+        return res;
     }
-    private void resolveDanmuJson(JSONArray jsonArray){
+    private  Object resolveDanmuJson(JSONArray jsonArray){
+        DmMessage message=null;
         try {
             JSONArray danmuData = jsonArray.getJSONArray(0);
             /*[0,1,25,16777215,1494147479,"1494140542",0,"c560f131",0]
@@ -199,30 +186,25 @@ public class BiliDMdata {
             白泽：勋章名称
             yuki琥珀：up
              */
+
             JSONArray medalData = jsonArray.getJSONArray(3);
             if(medalData==null||medalData.length()==0){
-                DmMessage message = new DmMessage(messageColor,timeData,messageData,id,userName,admin,vip,xxx,w1,w2);
-                messageList.add(message);
+                message = new DmMessage(messageColor,timeData,messageData,id,userName,admin,vip,xxx,w1,w2);
             }
             else{
                 int rank = medalData.getInt(0);
                 String rname = medalData.getString(1);
                 String up = medalData.getString(2);
-                DmMessage message = new DmMessage(messageColor,timeData,messageData,id,userName,admin,vip,xxx,w1,w2,rname,up,rank);
-                if(mOnSocketReceiveCallBack!=null){
-                    mOnSocketReceiveCallBack.OnReceiveFromServerMsg(1,message);
-                }
-                messageList.add(message);
+                message = new DmMessage(messageColor,timeData,messageData,id,userName,admin,vip,xxx,w1,w2,rname,up,rank);
             }
 
         }catch (Exception e){
             e.printStackTrace();
         }
-
-
+        return message;
     }
-    private void resolveGift(JSONObject jsonObject){
-
+    private  Object resolveGift(JSONObject jsonObject){
+        return null;
     }
 
 }
