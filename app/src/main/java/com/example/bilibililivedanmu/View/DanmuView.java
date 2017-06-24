@@ -24,7 +24,6 @@ public class DanmuView extends AppCompatActivity implements DmSocket.OnSocketRec
     static Handler mHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
-            //TODO 接受消息并显示到View
             switch (msg.what){
                 case 10086:
                     dmAdapter.addItem(dmAdapter.getItemCount(),(DmData.DmMessage) msg.obj);
@@ -62,5 +61,11 @@ public class DanmuView extends AppCompatActivity implements DmSocket.OnSocketRec
             message.obj = msg;
             mHandler.sendMessage(message);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mDmSocket.close();
     }
 }
