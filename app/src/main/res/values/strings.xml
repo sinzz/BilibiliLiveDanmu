@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">BilibiliLiveDanmu</string>
+    <string name="roomIdEdit_hint">请输入直播间房间号</string>
+    <string name="roomIdButton_name">获取弹幕</string>
 </resources>

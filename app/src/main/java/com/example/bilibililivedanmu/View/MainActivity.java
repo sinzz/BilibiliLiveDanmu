@@ -14,9 +14,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Button roomidButton;
     private EditText roomidEdit;
-    private String roomId;
-    private static final String roomUrl = "http://live.bilibili.com/";
-    private static final String danmuUrl = "livecmt-1.bilibili.com";
+    //private String roomId;
+    //private static final String roomUrl = "http://live.bilibili.com/";
+    //private static final String danmuUrl = "livecmt-1.bilibili.com";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

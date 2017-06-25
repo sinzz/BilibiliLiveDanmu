@@ -18,10 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DanmuView extends AppCompatActivity implements DmSocket.OnSocketReceiveCallBack{
-    private static RecyclerView mRecyclerView;
+    private  RecyclerView mRecyclerView;
     public static DmAdapter dmAdapter;
     private static final String DmService = "livecmt-1.bilibili.com";
-    static Handler mHandler = new Handler(){
+    private  Handler mHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what){
@@ -67,5 +67,6 @@ public class DanmuView extends AppCompatActivity implements DmSocket.OnSocketRec
     protected void onDestroy() {
         super.onDestroy();
         mDmSocket.close();
+        mHandler.removeCallbacksAndMessages(null);
     }
 }

@@ -16,7 +16,8 @@ import java.util.List;
  */
 
 public class DmAdapter extends RecyclerView.Adapter<DmAdapter.DmViewHolder>{
-    List<DmData.DmMessage> items;
+    private List<DmData.DmMessage> items;
+    private static final String  addToUser = " : ";
     public class DmViewHolder extends RecyclerView.ViewHolder{
         private TextView name;
         private TextView message;
@@ -38,7 +39,7 @@ public class DmAdapter extends RecyclerView.Adapter<DmAdapter.DmViewHolder>{
     @Override
     public void onBindViewHolder(DmViewHolder holder, int position) {
         holder.name.setText(items.get(position).getUser().getUserName());
-        holder.message.setText(" : "+items.get(position).getMessage());
+        holder.message.setText(addToUser+items.get(position).getMessage());
     }
 
     @Override

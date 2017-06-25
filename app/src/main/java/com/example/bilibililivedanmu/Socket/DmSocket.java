@@ -15,12 +15,10 @@ import java.net.Socket;
 import java.net.URL;
 import java.net.UnknownHostException;
 
-/**
- * Created by chazz on 2017/6/22.
- */
+
 
 public class DmSocket extends Thread{
-    private final String liveUrl = "http://live.bilibili.com/";
+    private final static String liveUrl = "http://live.bilibili.com/";
     private  final  String TAG = getClass().toString();
     public interface OnSocketReceiveCallBack{
         public void OnReceiveFromServerMsg(DmData.DmType type, Object msg);
@@ -78,6 +76,7 @@ public class DmSocket extends Thread{
                 int packType = inputStream.readInt();
                 int param = inputStream.readInt();
                 packLen = packLen-16;
+                int realLen = 0;
                     /*
                     剩下数据包大于0时，进行读取判断
                     数据包类型：1，2，3均为在线人数数据包
@@ -87,23 +86,24 @@ public class DmSocket extends Thread{
                 if(packLen>0){
                     switch (packType){
                         case 1:
-                            inputStream.read(buf,0,packLen);
-                            DebugLog.d(TAG,new String(buf,0,packLen));
+                            realLen =  inputStream.read(buf,0,packLen);
+                            DebugLog.d(TAG,new String(buf,0,realLen));
                             break;
                         case 2:
-                            inputStream.read(buf,0,packLen);
-                            DebugLog.d(TAG,new String(buf,0,packLen));
+                            realLen = inputStream.read(buf,0,packLen);
+                            DebugLog.d(TAG,new String(buf,0,realLen));
                             break;
                         case 3:
                             int number = inputStream.readInt();
                             break;
                         case 4:
-                            inputStream.read(buf,0,packLen);DebugLog.d(TAG,new String(buf,0,packLen));
+                            realLen = inputStream.read(buf,0,packLen);
+                            DebugLog.d(TAG,new String(buf,0,realLen));
                             break;
                         case 5:
-                            inputStream.read(buf,0,packLen);
-                            DebugLog.d(TAG,new String(buf,0,packLen));
-                            Object res =  mDmData.addJson(buf,packLen);
+                            realLen =inputStream.read(buf,0,packLen);
+                            DebugLog.d(TAG,new String(buf,0,realLen));
+                            Object res =  mDmData.addJson(buf,realLen);
                             if(mOnSocketReceiveCallBack!=null){
                                 DebugLog.d("test","CallBack");
                                 mOnSocketReceiveCallBack.OnReceiveFromServerMsg(DmData.DmType.MESSAGE,res);
@@ -111,7 +111,8 @@ public class DmSocket extends Thread{
                             }
                             break;
                         default:
-                            inputStream.read(buf,0,packLen);DebugLog.d(TAG,new String(buf,0,packLen));
+                            realLen = inputStream.read(buf,0,packLen);
+                            DebugLog.d(TAG,new String(buf,0,realLen));
                             break;
                     }
                 }
