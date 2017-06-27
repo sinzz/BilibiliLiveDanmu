@@ -10,6 +10,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/recyclerview">
-
     </android.support.v7.widget.RecyclerView>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_button"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:backgroundTint="#88C057"
+        app:rippleColor="#33728dff"
+        app:borderWidth="0dp"
+        android:visibility="gone"
+        android:src="@drawable/fab"
+
+        />
 </RelativeLayout>

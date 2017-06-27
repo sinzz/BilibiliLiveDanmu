@@ -52,7 +52,11 @@ public class DmAdapter extends RecyclerView.Adapter<DmAdapter.DmViewHolder>{
     }
     public void removeItem(int position){
         items.remove(position);
-        notifyItemInserted(position);
+        notifyItemRemoved(position);
+    }
+    public void removeItems(){
+        items.subList(1,1001).clear();
+        notifyItemRangeRemoved(1,1000);
     }
 
 }
