@@ -10,9 +10,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.example.bilibililivedanmu.Bean.DebugLog;
 import com.example.bilibililivedanmu.Bean.DmAdapter;
 import com.example.bilibililivedanmu.Bean.DmData;
+import com.example.bilibililivedanmu.Bean.DmStruct;
 import com.example.bilibililivedanmu.R;
 import com.example.bilibililivedanmu.Socket.DmSocket;
 
@@ -32,7 +32,7 @@ public class DanmuView extends AppCompatActivity implements DmSocket.OnSocketRec
             switch (msg.what){
                 case 10086:
                     int ItemCount = dmAdapter.getItemCount();
-                    dmAdapter.addItem(ItemCount,(DmData.DmMessage) msg.obj);
+                    dmAdapter.addItem(ItemCount,(DmStruct) msg.obj);
                     if(!isLastItem)
                         mRecyclerView.smoothScrollToPosition(ItemCount);
                     if(ItemCount>MAX_MESSAGE){
@@ -58,9 +58,10 @@ public class DanmuView extends AppCompatActivity implements DmSocket.OnSocketRec
         });
         Intent intent = this.getIntent();
         int roomid = intent.getIntExtra("roomid",0);
+        this.setTitle("Live:"+Integer.toString(roomid));
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        List<DmData.DmMessage> list = new ArrayList<>();
-        DmData.DmMessage tmp = DmData.getInstance().new DmMessage(1,1,"Welcome",1,"admin",1,1,1,1,1);
+        List<DmStruct> list = new ArrayList<>();
+        DmStruct tmp = new DmStruct(DmData.DmType.MESSAGE,DmData.getInstance().new DmMessage(1,1,"Welcome",1,"admin",1,1,1,1,1,1));
         list.add(tmp);
         dmAdapter = new DmAdapter(list);
         mRecyclerView.setAdapter(dmAdapter);
@@ -96,9 +97,9 @@ public class DanmuView extends AppCompatActivity implements DmSocket.OnSocketRec
     }
 
     @Override
-    public void OnReceiveFromServerMsg(DmData.DmType type, Object msg) {
-        if(msg!=null){
-            DebugLog.d("test","OnReceiveFromServerMsg");
+    public void OnReceiveFromServerMsg(DmStruct msg) {
+        if(msg!=null&&msg.getType()!= DmData.DmType.OTHER){
+            //DebugLog.d("test","OnReceiveFromServerMsg");
             Message message = new Message();
             message.what = 10086;
             message.obj = msg;

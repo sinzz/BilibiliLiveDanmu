@@ -2,6 +2,7 @@ package com.example.bilibililivedanmu.Socket;
 
 import com.example.bilibililivedanmu.Bean.DebugLog;
 import com.example.bilibililivedanmu.Bean.DmData;
+import com.example.bilibililivedanmu.Bean.DmStruct;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -21,9 +22,9 @@ public class DmSocket extends Thread{
     private final static String liveUrl = "http://live.bilibili.com/";
     private  final  String TAG = getClass().toString();
     public interface OnSocketReceiveCallBack{
-        public void OnReceiveFromServerMsg(DmData.DmType type, Object msg);
+        public void OnReceiveFromServerMsg(DmStruct obj);
     }
-    private    OnSocketReceiveCallBack mOnSocketReceiveCallBack;
+    private OnSocketReceiveCallBack mOnSocketReceiveCallBack;
     public OnSocketReceiveCallBack getOnSocketReceiveCallBack(){
         return mOnSocketReceiveCallBack;
     }
@@ -51,6 +52,16 @@ public class DmSocket extends Thread{
         byte[] buf = new byte[1024*4];
         long lastKeepTime = System.currentTimeMillis();
         DmData mDmData = DmData.getInstance();
+        /*
+        File file = new File(Environment.getExternalStorageDirectory(),"Dan.log");
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(file);
+        }catch (Exception e){
+            e.printStackTrace();
+
+        }
+        */
         while (isAlive){
             if(client == null){
                 if(!openSocket()){
@@ -87,10 +98,12 @@ public class DmSocket extends Thread{
                     switch (packType){
                         case 1:
                             realLen =  inputStream.read(buf,0,packLen);
+
                             DebugLog.d(TAG,new String(buf,0,realLen));
                             break;
                         case 2:
                             realLen = inputStream.read(buf,0,packLen);
+
                             DebugLog.d(TAG,new String(buf,0,realLen));
                             break;
                         case 3:
@@ -102,11 +115,15 @@ public class DmSocket extends Thread{
                             break;
                         case 5:
                             realLen =inputStream.read(buf,0,packLen);
-                            DebugLog.d(TAG,new String(buf,0,realLen));
-                            Object res =  mDmData.addJson(buf,realLen);
+                            //fos.write(buf,0,packLen);
+                            //fos.write('\n');
+                            //bufferedWriter.write(new String(buf,0,realLen));
+                            //bufferedWriter.newLine();
+                            //DebugLog.d(TAG,new String(buf,0,realLen));
+                            DmStruct res =  mDmData.addJson(buf,realLen);
                             if(mOnSocketReceiveCallBack!=null){
-                                DebugLog.d("test","CallBack");
-                                mOnSocketReceiveCallBack.OnReceiveFromServerMsg(DmData.DmType.MESSAGE,res);
+                                //DebugLog.d("test","CallBack");
+                                mOnSocketReceiveCallBack.OnReceiveFromServerMsg(res);
 
                             }
                             break;

@@ -7,7 +7,7 @@ import android.util.Log;
  */
 
 public class DebugLog {
-    private final static boolean debug = false;
+    private final static boolean debug = true;
     private final static String TAG = "DebugLog";
 
     public static void v(String tag, String msg) {
